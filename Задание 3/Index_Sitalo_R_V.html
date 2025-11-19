@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Визитка — Ситало Р.В.</title>
+</head>
+<body>
+
+<!-- Внешняя рамка -->
+<table border="6" width="98%" cellpadding="10" cellspacing="0" align="center">
+  <tr>
+    <td>
+      <!-- Внешний блок -->
+      <div align="center"><strong>Сайт-визитка</strong></div>
+      <!-- Внутренняя рамка -->
+      <table border="4" width="95%" cellpadding="8" cellspacing="0" align="center">
+        <tr>
+          <td>
+
+            <!-- Заголовок 5 -->
+            <div align="center">
+              <h5>Лабораторная работа №3</h5>
+            </div>
+
+            <!-- Основная таблица макета -->
+            <table border="4" width="90%" cellpadding="8" cellspacing="0" align="center">
+              <!-- Заголовок области 4 -->
+              <tr>
+                <td colspan="3" align="center">
+                  <h4>Информация</h4>
+                </td>
+              </tr>
+
+              <!-- Три колонки: левая, средняя, правая -->
+              <tr>
+                <!-- Левая колонка: личные данные, маркированный список -->
+                <td width="33%" valign="top">
+                  <ul>
+                    <li>Ф.И.О.: Ситало Роман Валерьевич</li>
+                    <li>Дата рождения: 03.09.2002</li>
+                    <li>Город: Москва</li>
+                  </ul>
+                </td>
+
+                <!-- Средняя колонка: контакты, нумерованный список с римскими цифрами -->
+                <td width="34%" valign="top">
+                  <!-- Нумерованный список с римскими цифрами -->
+                  <ol type="I">
+                    <li>Телефон: +7-999-123-45-67</li>
+                    <li>E-mail: <a href="mailto:sitalorv@example.com">sitalorv@example.com</a></li>
+                    <li>Telegram: <a href="http://t.me/sitalorv">@sitalorv</a></li>
+                  </ol>
+                </td>
+
+                <!-- Правая колонка: изображение и таблица метро -->
+                <td width="33%" valign="top">
+                  <!-- Область изображения с фотографией -->
+                  <div id="image-area" align="center">
+                    <img id="main-image" src="photo.jpg" alt="Фотография" width="50%" height="50%">
+                    <!-- Скрытые изображения станций метро -->
+                    <img id="kievskaya-img" class="metro-image" src="kievskaya.png" alt="Станция Киевская" width="50%" height="50%">
+                    <img id="tverskaya-img" class="metro-image" src="tverskaya.png" alt="Станция Тверская" width="50%" height="50%">
+                    <img id="pushkinskaya-img" class="metro-image" src="pushkinskaya.png" alt="Станция Пушкинская" width="50%" height="50%">
+                    <img id="teatralnya-img" class="metro-image" src="teatralnya.png" alt="Станция Театральная" width="50%" height="50%">
+                    <img id="vihino-img" class="metro-image" src="vihino.png" alt="Станция Выхино" width="50%" height="50%">
+                  </div>
+                  <!-- Разделитель -->
+                  <hr>
+                  <table border="3" width="90%" cellpadding="6" cellspacing="0" align="center">
+                    <tr>
+                      <th>№</th>
+                      <th>Станция</th>
+                    </tr>
+                    <tr>
+                      <td align="center">1</td>
+                      <td class="metro-station" data-station="kievskaya" data-font="Arial">Киевская</td>
+                    </tr>
+                    <tr>
+                      <td align="center">2</td>
+                      <td class="metro-station" data-station="tverskaya" data-font="Tahoma">Тверская</td>
+                    </tr>
+                    <tr>
+                      <td align="center">3</td>
+                      <td class="metro-station" data-station="pushkinskaya" data-font="Comic Sans MS">Пушкинская</td>
+                    </tr>
+                    <tr>
+                      <td align="center">4</td>
+                      <td class="metro-station" data-station="teatralnya" data-font="Book Antiqua">Театральная</td>
+                    </tr>
+                    <tr>
+                      <td align="center">5</td>
+                      <td class="metro-station" data-station="vihino" data-font="Courier New">Выхино</td>
+                    </tr>
+                  </table>
+
+                </td>
+              </tr>
+              <!-- Низ: область копирайта -->
+              <tr>
+                <td colspan="3" align="center">
+                  <strong>© 2025 Ситало</strong>
+                </td>
+              </tr>
+            </table> <!-- конец основной таблицы макета -->
+          </td>
+        </tr>
+      </table> <!-- конец внутренней рамки -->
+    </td>
+  </tr>
+</table> <!-- конец внешней рамки -->
+
+<script>
+  // Массив шрифтов для станций метро
+  const fonts = ['Arial', 'Tahoma', 'Comic Sans MS', 'Book Antiqua', 'Courier New'];
+  
+  // Получаем элементы станций метро
+  const metroStations = document.querySelectorAll('.metro-station');
+  const mainImage = document.getElementById('main-image');
+  const imageArea = document.getElementById('image-area');
+  
+  // Добавляем обработчики событий для каждой станции метро
+  metroStations.forEach((station, index) => {
+    // Обработчик наведения мыши
+    station.addEventListener('mouseover', function() {
+      // Скрываем основное фото
+      mainImage.style.display = 'none';
+      
+      // Показываем соответствующее изображение станции метро
+      const stationId = this.getAttribute('data-station');
+      const stationImage = document.getElementById(stationId + '-img');
+      if (stationImage) {
+        stationImage.style.display = 'block';
+      }
+      
+      // Применяем соответствующий шрифт ко всей странице
+      const fontIndex = index % fonts.length;
+      document.body.style.fontFamily = fonts[fontIndex];
+    });
+    
+    // Обработчик ухода мыши
+    station.addEventListener('mouseout', function() {
+      // Скрываем все изображения станций метро
+      document.querySelectorAll('.metro-image').forEach(img => {
+        img.style.display = 'none';
+      });
+      
+      // Показываем основное фото
+      mainImage.style.display = 'block';
+    });
+  });
+  
+  // Обработчик двойного клика для сброса в исходное состояние
+  imageArea.addEventListener('dblclick', function() {
+    // Скрываем все изображения станций метро
+    document.querySelectorAll('.metro-image').forEach(img => {
+      img.style.display = 'none';
+    });
+    
+    // Показываем основное фото
+    mainImage.style.display = 'block';
+    
+    // Сбрасываем шрифт на исходный
+    document.body.style.fontFamily = '';
+  });
+</script>
+
+</body>
+</html>
