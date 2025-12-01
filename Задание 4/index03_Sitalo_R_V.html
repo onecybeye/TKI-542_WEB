@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>адание 4.3: Работа с методами и событиями</title>
+    <script src="/vue.js"></script>
+</head>
+<body>
+    <div id="app" @keyup="moveCircle" tabindex="0" style="outline: none;">
+        <p>Используйте клавиши 'a', 'w', 's', 'd' или стрелки курсора для перемещения круга. Кликните на область SVG, чтобы она была в фокусе.</p>
+        <svg :width="svgWidth" :height="svgHeight" style="border: 1px solid black;">
+            <circle :cx="circle.cx" :cy="circle.cy" :r="circle.radius" fill="blue" />
+        </svg>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                svgWidth: 800,
+                svgHeight: 600,
+                circle: {
+                    cx: 0,
+                    cy: 0,
+                    radius: 10
+                },
+                step: 10,
+                margin: 10
+            },
+            methods: {
+                moveCircle(event) {
+                    const key = event.key;
+                    const lowerKey = key.toLowerCase();
+                    let newCx = this.circle.cx;
+                    let newCy = this.circle.cy;
+
+                    if (key === 'ArrowLeft' || lowerKey === 'a') {
+                        newCx -= this.step;
+                    } else if (key === 'ArrowRight' || lowerKey === 'd') {
+                        newCx += this.step;
+                    } else if (key === 'ArrowUp' || lowerKey === 'w') {
+                        newCy -= this.step;
+                    } else if (key === 'ArrowDown' || lowerKey === 's') {
+                        newCy += this.step;
+                    }
+
+                    // Проверка границ
+                    const minX = this.circle.radius + this.margin;
+                    const maxX = this.svgWidth - this.circle.radius - this.margin;
+                    const minY = this.circle.radius + this.margin;
+                    const maxY = this.svgHeight - this.circle.radius - this.margin;
+                    
+                    if (newCx >= minX && newCx <= maxX) {
+                        this.circle.cx = newCx;
+                    }
+                    if (newCy >= minY && newCy <= maxY) {
+                        this.circle.cy = newCy;
+                    }
+                },
+                generateInitialPosition() {
+                    const minX = this.circle.radius + this.margin;
+                    const maxX = this.svgWidth - this.circle.radius - this.margin;
+                    const minY = this.circle.radius + this.margin;
+                    const maxY = this.svgHeight - this.circle.radius - this.margin;
+                    
+                    this.circle.cx = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+                    this.circle.cy = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+                }
+            },
+            created() {
+                this.generateInitialPosition();
+            }
+        });
+    </script>
+</body>
+</html>
