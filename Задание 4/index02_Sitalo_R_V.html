@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 4.2: Работа с v-on</title>
+    <script src="/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <p>Текущее значение: {{ currentValue.toFixed(1) }}</p>
+        <input type="range" v-bind:min="min" v-bind:max="max" v-bind:step="0.1" v-bind:value="currentValue">
+        <br>
+        <button v-on:click="changeValue(0.1)">Шаг 0.1</button>
+        <button v-on:click="changeValue(0.5)">Шаг 0.5</button>
+        <button v-on:click="changeValue(1.0)">Шаг 1.0</button>
+        <br>
+        <button v-on:click="resetValue">Сброс</button>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                min: -5,
+                max: 7,
+                currentValue: -5
+            },
+            methods: {
+                changeValue: function(step) {
+                    let newValue = this.currentValue + step;
+                    if (newValue > this.max) {
+                        this.currentValue = this.min;
+                    } else {
+                        this.currentValue = parseFloat(newValue.toFixed(1));
+                    }
+                },
+                resetValue: function() {
+                    this.currentValue = this.min;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

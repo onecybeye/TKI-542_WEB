@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 4.4: Условная отрисовка</title>
+    <script src="/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div>
+            <label>Номер по порядку: <input v-model="biblio.orderNum"></label><br>
+            <label>Фамилия автора: <input v-model="biblio.lastName"></label><br>
+            <label>Имя автора: <input v-model="biblio.firstName"></label><br>
+            <label>Отчество автора: <input v-model="biblio.middleName"></label><br>
+            <label>Название статьи: <input v-model="biblio.articleTitle"></label><br>
+            <label>Название журнала: <input v-model="biblio.journalTitle"></label><br>
+            <label>Год выпуска: <input v-model="biblio.year"></label><br>
+            <label>Номер тома: <input v-model="biblio.volume"></label><br>
+            <label>Номер выпуска: <input v-model="biblio.issue"></label><br>
+            <label>Номера страниц: <input v-model="biblio.pages"></label><br>
+        </div>
+
+        <hr>
+
+        <div>
+            <label><input type="checkbox" v-model="show.russian"> Библиографическая ссылка (Русский)</label><br>
+            <label><input type="checkbox" v-model="show.english"> Библиографическая ссылка (Английский)</label><br>
+            <label><input type="checkbox" v-model="show.gost"> Библиографическая ссылка (ГОСТ)</label><br>
+            <label><input type="checkbox" v-model="show.scopus"> Библиографическая ссылка (Scopus)</label><br>
+            <label><input type="checkbox" v-model="show.translit"> Транслитерация для Scopus</label><br>
+        </div>
+
+        <hr>
+
+        <div v-if="show.russian">
+            <h3>Библиографическая ссылка на русском языке</h3>
+            <p>{{ biblio.lastName }} {{ biblio.firstName }} {{ biblio.middleName }}. {{ biblio.articleTitle }} // {{ biblio.journalTitle }}. – {{ biblio.year }}. – Т. {{ biblio.volume }}, № {{ biblio.issue }}. – С. {{ biblio.pages }}.</p>
+        </div>
+        
+        <div v-if="show.english">
+            <h3>Библиографическая ссылка на английском языке</h3>
+            <p>{{ translit(biblio.lastName) }} {{ translit(biblio.firstName) }} {{ translit(biblio.middleName) }}. {{ translit(biblio.articleTitle) }} // {{ translit(biblio.journalTitle) }}. {{ biblio.year }}. vol. {{ biblio.volume }}. no. {{ biblio.issue }}. pp. {{ biblio.pages }}.</p>
+        </div>
+
+        <div v-if="show.gost">
+            <h3>Библиографическая ссылка в формате ГОСТ</h3>
+            <p>{{ biblio.orderNum }}. {{ biblio.lastName }}, {{ biblio.firstName.charAt(0) }}. {{ biblio.middleName.charAt(0) }}. {{ biblio.articleTitle }} / {{ biblio.firstName.charAt(0) }}. {{ biblio.middleName.charAt(0) }}. {{ biblio.lastName }} // {{ biblio.journalTitle }}. – {{ biblio.year }}. – Т. {{ biblio.volume }}, № {{ biblio.issue }}. – С. {{ biblio.pages }}</p>
+        </div>
+
+        <div v-if="show.scopus">
+            <h3>Библиографическая ссылка в формате Scopus</h3>
+            <p>[{{ biblio.orderNum }}] {{ translit(biblio.lastName) }} {{ translit(biblio.firstName).charAt(0) }} {{ translit(biblio.middleName).charAt(0) }} {{ biblio.year }} {{ translit(biblio.articleTitle) }} ({{ translit(biblio.journalTitle) }} vol {{ biblio.volume }}) pp {{ biblio.pages }}</p>
+        </div>
+
+        <div v-if="show.translit">
+            <h3>Транслитерация русскоязычной информации в формат Scopus</h3>
+            <p>{{ translit(biblio.lastName) }} {{ translit(biblio.firstName) }} {{ translit(biblio.middleName) }}. {{ translit(biblio.articleTitle) }} // {{ translit(biblio.journalTitle) }}. – {{ biblio.year }}. – T. {{ biblio.volume }}, № {{ biblio.issue }}. – S. {{ biblio.pages }}.</p>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                biblio: {
+                    orderNum: '1',
+                    lastName: 'Баранов',
+                    firstName: 'Л',
+                    middleName: 'А',
+                    articleTitle: 'Интеллектуальное централизованное управление движением внеуличного городского железнодорожного транспорта в условиях интенсивного движения',
+                    journalTitle: 'Надежность',
+                    year: '2021',
+                    volume: '21',
+                    issue: '2',
+                    pages: '17-23'
+                },
+                show: {
+                    russian: false,
+                    english: false,
+                    gost: false,
+                    scopus: false,
+                    translit: false
+                }
+            },
+            methods: {
+                translit(text) {
+                    const converter = {
+                        'а': 'a',    'б': 'b',    'в': 'v',    'г': 'g',    'д': 'd',
+                        'е': 'e',    'ё': 'e',    'ж': 'zh',   'з': 'z',    'и': 'i',
+                        'й': 'y',    'к': 'k',    'л': 'l',    'м': 'm',    'н': 'n',
+                        'о': 'o',    'п': 'p',    'р': 'r',    'с': 's',    'т': 't',
+                        'у': 'u',    'ф': 'f',    'х': 'h',    'ц': 'c',    'ч': 'ch',
+                        'ш': 'sh',   'щ': 'sch',  'ь': '',     'ы': 'y',    'ъ': '',
+                        'э': 'e',    'ю': 'yu',   'я': 'ya',
+                        'А': 'A',    'Б': 'B',    'В': 'V',    'Г': 'G',    'Д': 'D',
+                        'Е': 'E',    'Ё': 'E',    'Ж': 'Zh',   'З': 'Z',    'И': 'I',
+                        'Й': 'Y',    'К': 'K',    'Л': 'L',    'М': 'M',    'Н': 'N',
+                        'О': 'O',    'П': 'P',    'Р': 'R',    'С': 'S',    'Т': 'T',
+                        'У': 'U',    'Ф': 'F',    'Х': 'H',    'Ц': 'C',    'Ч': 'Ch',
+                        'Ш': 'Sh',   'Щ': 'Sch',  'Ь': '',     'Ы': 'Y',    'Ъ': '',
+                        'Э': 'E',    'Ю': 'Yu',   'Я': 'Ya'
+                    };
+                    let result = '';
+                    for (let i = 0; i < text.length; i++) {
+                        result += converter[text[i]] === undefined ? text[i] : converter[text[i]];
+                    }
+                    return result;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

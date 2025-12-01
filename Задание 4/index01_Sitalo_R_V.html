@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 4.1: Параметрическая подстановка</title>
+    <script src="/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <ol v-bind:type="listType" v-bind:start="listStart">
+            <li>Первый элемент</li>
+            <li>Второй элемент</li>
+            <li>Третий элемент</li>
+            <li>Четвертый элемент</li>
+            <li>Пятый элемент</li>
+        </ol>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                listType: 'I',
+                listStart: 10
+            }
+        });
+    </script>
+</body>
+</html>
