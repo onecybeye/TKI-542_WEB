@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5.3</title>
+    <script src="vue.js"></script>
+    <style>
+        body { font-family: sans-serif; }
+        #app { max-width: 500px; }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        ul, select {
+            width: 100%;
+            min-height: 150px;
+            border: 1px solid #ccc;
+            padding: 0;
+            list-style-type: disc;
+            list-style-position: inside;
+        }
+        li {
+             padding: 5px 10px;
+             border-bottom: 1px solid #eee;
+        }
+        select {
+            padding: 5px;
+        }
+        .tip { font-size: 0.9em; color: #555; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <p class="tip">
+            Введите значение и нажмите <strong>Ctrl+Enter</strong> для добавления.<br>
+            Введите <code>#редактировать#</code> для перехода в режим редактирования.<br>
+            Введите <code>#вводить#</code> для возврата в режим просмотра.
+        </p>
+
+        <input 
+            type="text" 
+            v-model.trim="inputValue" 
+            @keydown.ctrl.enter.prevent="handleEnter">
+
+        <div v-if="mode === 'list'">
+            <p><strong>Текущий список (статический):</strong></p>
+            <ul>
+                <li v-for="(item, index) in items" :key="index">
+                    {{ item }}
+                </li>
+                 <li v-if="items.length === 0"><em>Список пуст</em></li>
+            </ul>
+        </div>
+
+        <div v-else-if="mode === 'edit'">
+            <p><strong>Выберите элемент для редактирования:</strong></p>
+            <select v-model="selectedIndex" size="8">
+                <option v-for="(item, index) in items" :value="index" :key="index">
+                    {{ item }}
+                </option>
+            </select>
+        </div>
+
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                inputValue: '',
+                items: ['Элемент 1', 'Элемент 2', 'Элемент 3'],
+                mode: 'list',
+                selectedIndex: null
+            },
+            watch: {
+                inputValue(newValue) {
+                    if (newValue === '#редактировать#') {
+                        this.mode = 'edit';
+                        this.inputValue = ''; 
+                        if (this.items.length > 0) {
+                           this.selectedIndex = 0;
+                        }
+                    } else if (newValue === '#вводить#') {
+                        this.mode = 'list';
+                        this.inputValue = '';
+                    }
+                },
+                selectedIndex(newIndex) {
+                    if (newIndex !== null && this.mode === 'edit') {
+                        this.inputValue = this.items[newIndex];
+                    }
+                }
+            },
+            methods: {
+                handleEnter() {
+                     if (this.inputValue === '' || this.inputValue.startsWith('#')) return;
+
+                    if (this.mode === 'list') {
+                        this.items.push(this.inputValue);
+                        this.inputValue = '';
+                    } else if (this.mode === 'edit' && this.selectedIndex !== null) {
+                        this.items.splice(this.selectedIndex, 1, this.inputValue);
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
