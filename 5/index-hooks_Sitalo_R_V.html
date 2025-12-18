@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5.1</title>
+    <script src="vue.js"></script>
+    <style>
+        body { font-family: sans-serif; }
+        #app { display: flex; gap: 20px; }
+        .coords, .log { border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+        .coords { background-color: #f0f0f0; min-width: 200px; }
+        .log { width: 500px; height: 300px; overflow-y: scroll; background-color: #333; color: lime; font-family: monospace;}
+        .log-entry { padding: 2px 5px; border-bottom: 1px solid #444; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="coords">
+            <h2>Координаты мыши</h2>
+            <p>X: {{ x }}</p>
+            <p>Y: {{ y }}</p>
+            <button @click="destroyApp">Уничтожить приложение</button>
+        </div>
+        <div class="log">
+            <div v-for="(entry, index) in log" :key="index" class="log-entry">{{ entry }}</div>
+        </div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                x: 0,
+                y: 0,
+                log: []
+            },
+            methods: {
+                logEvent: function(eventName) {
+                    const message = `${new Date().toLocaleTimeString()} - Хук: ${eventName}`;
+                    console.log(message);
+                    this.log.push(message);
+                },
+                updateCoordinates: function(event) {
+                    this.x = event.clientX;
+                    this.y = event.clientY;
+                },
+                destroyApp: function() {
+                    this.$destroy();
+                }
+            },
+            beforeCreate: function() {
+                console.log('beforeCreate: Экземпляр еще не создан.');
+            },
+            created: function() {
+                this.logEvent('created');
+                document.addEventListener('mousemove', this.updateCoordinates);
+            },
+            beforeMount: function() {
+                this.logEvent('beforeMount');
+            },
+            mounted: function() {
+                this.logEvent('mounted');
+            },
+            beforeUpdate: function() {
+                 console.log('beforeUpdate: Данные изменились, DOM еще нет.');
+            },
+            updated: function() {
+                 console.log('updated: DOM обновлен.');
+            },
+            beforeDestroy: function() {
+                this.logEvent('beforeDestroy');
+                document.removeEventListener('mousemove', this.updateCoordinates);
+            },
+            destroyed: function() {
+                 console.log('destroyed: Приложение уничтожено.');
+                 alert('Приложение Vue уничтожено! Слушатель мыши удален.');
+            }
+        });
+    </script>
+</body>
+</html>

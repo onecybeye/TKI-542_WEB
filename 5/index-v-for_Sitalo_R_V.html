@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5.2</title>
+    <script src="vue.js"></script>
+    <style>
+        body { font-family: sans-serif; }
+        .controls { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
+        .controls label { font-weight: bold; }
+        .controls input { width: 80px; }
+        svg {
+            border: 1px solid black;
+        }
+        .axis-line, .tick-line {
+            stroke: black;
+            stroke-width: 2;
+        }
+        .zero-tick {
+            stroke-width: 4; /* Жирная засечка для нуля */
+        }
+        .axis-arrow {
+            fill: black;
+        }
+        .tick-label {
+            font-size: 12px;
+            text-anchor: middle; /* Центрирование текста под засечкой */
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="controls">
+            <label>Начало:</label>
+            <input type="number" v-model.number="start">
+            <label>Конец:</label>
+            <input type="number" v-model.number="end">
+            <label>Шаг:</label>
+            <input type="number" v-model.number="step" min="1">
+            <label>Округление (знаков):</label>
+            <input type="number" v-model.number="rounding" min="0">
+        </div>
+
+        <svg width="1000" height="300">
+            <!-- Координатная ось -->
+            <line class="axis-line" :x1="padding" :y1="axisY" :x2="svgWidth - padding" :y2="axisY" />
+
+            <!-- Стрелка на конце оси -->
+            <polygon class="axis-arrow" :points="arrowPoints" />
+
+            <!-- Засечки и подписи (v-for) -->
+            <g v-for="tick in ticks" :key="tick.value">
+                <line 
+                    class="tick-line"
+                    :class="{ 'zero-tick': tick.value === 0 }" 
+                    :x1="tick.x" 
+                    :y1="axisY - 5" 
+                    :x2="tick.x" 
+                    :y2="axisY + 5" />
+                <text 
+                    class="tick-label" 
+                    :x="tick.x" 
+                    :y="axisY + 20">
+                    {{ tick.label }}
+                </text>
+            </g>
+        </svg>
+
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                start: -10,
+                end: 10,
+                step: 2,
+                rounding: 0,
+                svgWidth: 1000,
+                svgHeight: 300,
+                padding: 100
+            },
+            computed: {
+                axisY() {
+                    return this.svgHeight - this.padding; // Ось отстает на 100px сверху
+                },
+                axisLength() {
+                    return this.svgWidth - (2 * this.padding);
+                },
+                arrowPoints() {
+                    const headX = this.svgWidth - this.padding;
+                    const headY = this.axisY;
+                    return `${headX},${headY} ${headX - 10},${headY - 5} ${headX - 10},${headY + 5}`;
+                },
+                ticks() {
+                    const ticksArray = [];
+                    const range = this.end - this.start;
+                    if (range <= 0 || this.step <= 0) return [];
+
+                    for (let value = this.start; value <= this.end; value += this.step) {
+                        ticksArray.push(value);
+                    }
+                    
+                    // Проверяем, есть ли ноль в диапазоне, но не в шаге
+                    if (this.start < 0 && this.end > 0 && !ticksArray.includes(0)) {
+                         // Добавляем 0 и сортируем, чтобы он был на своем месте.
+                        ticksArray.push(0);
+                        ticksArray.sort((a, b) => a - b);
+                    }
+
+                    return ticksArray.map(value => {
+                        const proportion = (value - this.start) / range;
+                        const x = this.padding + (proportion * this.axisLength);
+                        return {
+                            value: value,
+                            x: x,
+                            label: value.toFixed(this.rounding)
+                        };
+                    });
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
